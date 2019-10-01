@@ -1,0 +1,7 @@
+﻿{
+  "prefix": ".",
+  "token": "bot-token-here",
+  "support_link": "https://discord.gg/xxxxxx",
+  "database": "Database.db",
+  "connectionString": "Data Source=Database.db;Version=3;DateTimeFormat=Ticks;Pooling=True;Max Pool Size=100;"
+}
