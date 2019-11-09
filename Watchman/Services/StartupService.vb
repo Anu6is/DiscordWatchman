@@ -18,10 +18,10 @@ Friend Class StartupService
     End Sub
 
     Public Async Function InitializeAsync(services As IServiceProvider) As Task
-        Dim designer As New DatabaseDesigner(_config)
-
-        designer.CreateDb()
-        designer.BuildTables()
+        With New DatabaseDesigner(_config)
+            .CreateDb()
+            .BuildTables()
+        End With
 
         Await _client.LoginAsync(TokenType.Bot, _config("token"))
         Await _client.StartAsync()
@@ -32,6 +32,7 @@ Friend Class StartupService
         Await _commands.AddModulesAsync(baseAssembly, services)
 
         Using scope = services.CreateScope()
+            scope.ServiceProvider.GetRequiredService(Of PrefixService)
             scope.ServiceProvider.GetRequiredService(Of CommandHandler).Initialize()
             scope.ServiceProvider.GetRequiredService(Of ActivityService).Initialize()
             scope.ServiceProvider.GetRequiredService(Of WatchDogService).Initialize()

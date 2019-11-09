@@ -89,7 +89,6 @@ Public Class DataService
 
     Private Async Function GetOpenConnectionAsync() As Task(Of IDbConnection)
         Dim connection As New SQLiteConnection(_connectionString)
-
         Await connection.OpenAsync
         Return connection
     End Function

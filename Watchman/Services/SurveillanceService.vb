@@ -39,4 +39,47 @@ Public Class SurveillanceService
 
         Return duplicates
     End Function
+
+    Public Async Function GetByIdAsync(Of T)(obj As T) As Task(Of T)
+        Return Await _data.GetByIdAsync(obj)
+    End Function
+
+    Public Async Function InsertAsync(Of T)(obj As T) As Task(Of T)
+        Return Await _data.InsertAsync(obj)
+    End Function
+
+    Public Async Function DeleteAsync(Of T)(obj As T) As Task(Of Boolean)
+        Return Await _data.DeleteAsync(obj)
+    End Function
+
+    Public Async Function UpdateAsync(Of T)(obj As T) As Task(Of Boolean)
+        Return Await _data.UpdateAsync(obj)
+    End Function
+
+    Public Async Function BulkUpdateAsync(Of T)(obj As T, columns As String(), condition As FormattableString) As Task(Of Boolean)
+        Return Await _data.BulkUpdateAsync(obj, columns, condition)
+    End Function
+
+    Public Async Function GetGuildTargetsAsync(guildId As ULong) As Task(Of List(Of Target))
+        Return Await _data.GetListAsync(Of Target)($"{NameOf(Target.GuildId):C}=@GuildIdParam", New With {Key .GuildIdParam = guildId})
+    End Function
+
+    Public Async Function GetUserTargetsForGuildAsync(guildId As ULong, userId As ULong) As Task(Of List(Of Target))
+        Return Await _data.GetJointListAsync(Of Target, Contract)($"{NameOf(Target.GuildId):C}=@GuildIdParam",
+                                                                  New With {Key .GuildIdParam = guildId, Key .UserIdParam = userId},
+                                                                  $"{NameOf(Contract.UserId):C}=@UserIdParam")
+    End Function
+
+    Public Async Function GetUserContractsForGuildAsync(guildId As ULong, userId As ULong) As Task(Of List(Of Contract))
+        Return Await _data.GetJointListAsync(Of Contract, Target)($"{NameOf(Contract.UserId):C}=@UserIdParam",
+                                                                  New With {Key .UserIdParam = userId, Key .GuildIdParam = guildId},
+                                                                  $"{NameOf(Target.GuildId):C}=@GuildIdParam")
+    End Function
+
+    Public Async Function GetSelectedContractsForGuildAsync(guildId As ULong, userId As ULong, targetIds As IEnumerable(Of ULong)) As Task(Of List(Of Contract))
+        Dim ids = String.Join(",", targetIds)
+        Return Await _data.GetJointListAsync(Of Contract, Target)($"{NameOf(Contract.UserId):C}=@UserIdParam",
+                                                                  New With {Key .UserIdParam = userId, Key .GuildIdParam = guildId},
+                                                                  $"{NameOf(Target.GuildId):C}=@GuildIdParam AND {NameOf(Target.BotId):C} IN ({ids})")
+    End Function
 End Class

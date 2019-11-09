@@ -59,6 +59,20 @@ Public Class DatabaseDesigner
         End Get
     End Property
 
+    Private ReadOnly Property GuildSettingsTableCreate As String
+        Get
+            Dim sql As New StringBuilder()
+            'Formatting using string builder is strictly for aesthetics
+            With sql
+                .Append("CREATE TABLE IF NOT EXISTS GuildSettings")
+                .Append("([GuildId] INTEGER NOT NULL PRIMARY KEY UNIQUE,")
+                .Append("[Prefix] TEXT NOT NULL);")
+            End With
+
+            Return sql.ToString
+        End Get
+    End Property
+
     Private ReadOnly Property TargetTableIndex As String
         Get
             Return "CREATE INDEX IF NOT EXISTS target_ids ON Target (GuildId, BotId);"
@@ -117,7 +131,6 @@ Public Class DatabaseDesigner
 
         If File.Exists(database) Then
             If Not overwrite Then Return
-
             File.Delete(database)
         End If
 
@@ -132,6 +145,7 @@ Public Class DatabaseDesigner
                 command.CommandText = TargetTableCreate : command.ExecuteNonQuery()
                 command.CommandText = ContractTableCreate : command.ExecuteNonQuery()
                 command.CommandText = GuildAlertTableCreate : command.ExecuteNonQuery()
+                command.CommandText = GuildSettingsTableCreate : command.ExecuteNonQuery()
 
                 command.CommandText = TargetTableIndex : command.ExecuteNonQuery()
                 command.CommandText = ContractTableIndex : command.ExecuteNonQuery()

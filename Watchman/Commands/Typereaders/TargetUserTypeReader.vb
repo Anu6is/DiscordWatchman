@@ -4,6 +4,7 @@ Imports Discord.WebSocket
 Imports Microsoft.Extensions.Configuration
 Imports Microsoft.Extensions.DependencyInjection
 
+<TypeReader(GetType(IUser))>
 Public Class TargetUserTypeReader
     Inherits DiscordUserTypeReader
 
